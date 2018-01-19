@@ -1,4 +1,4 @@
-# Review of npm and git (upadted)
+# Review of npm and git (updated)
 
 Both Git/github and npm are tools we'll use extensively throughout the class. We'll have many opportunities to practice with their use, and this brief assignment will get you up to speed.
 
