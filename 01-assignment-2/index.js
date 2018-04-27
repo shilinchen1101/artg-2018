@@ -137,16 +137,26 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	YOUR CODE HERE:
 	***/
 
-	const numberofTrips = d3.nest()
-		.key(function(d) { return d.station0; })
-		.rollup(function(v) {return v.length;})
-		.entries(trips);
-	console.log(JSON.stringify(numberofTrips));
+  const tripsByStation = tripsByStation
+		.map(function(d){
+			return{
+				key:d.key,
+				value:d.value.length
+			}
+		});
 
-	departureStation.forEach(function(d){
-		d.count = d.values.length;
-		console.log(d.count);
-	})
+	console.log(tripsByStation);
+
+	// const numberofTrips = d3.nest()
+	// 	.key(function(d) { return d.station0; })
+	// 	.rollup(function(v) {return v.length;})
+	// 	.entries(trips);
+	// console.log(JSON.stringify(numberofTrips));
+	//
+	// departureStation.forEach(function(d){
+	// 	d.count = d.values.length;
+	// 	console.log(d.count);
+	// })
 
 
 

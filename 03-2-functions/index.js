@@ -43,12 +43,13 @@ someObj.foo();
 
 //2.3: a twist on 2.2
 const bar = someObj.foo;
-bar();
+console.group
 
 //2.4
 //We can use function.prototype.bind to copy an existing function and arbitrarily assign its "this" context
 const baz = someObj.foo.bind('I am some arbitrary string');
 baz();
+
 
 //2.5
 //One frequent use of "this" in relation to d3 is when we use the selection.each function
@@ -59,24 +60,31 @@ d3.select(document.querySelector('body'))
 	.append('span')
 	.each(function(d,i){
 		console.group('---2.5---');
-		console.log(this); //what is "this"?
-		console.log(d);
-		console.log(i);
+		console.log(this); //what is "this"? elements
+		console.log(d);//data
+		console.log(i);//index
 		console.groupEnd();
 	});
 
-//2.6 
+//2.6
 //Also beware of "this" context when using selection.on
 d3.select(document.getElementById('dummy-button'))
 	.on('click', function(d){
 		console.group('---2.6---');
-		console.log(this); //what is "this"?
+		console.log(this); //what is "this"? button itself
 		console.groupEnd();
+
+		d3.select(this)
 
 		//YOUR CODE HERE
 		//How do you change the html content of the button to "I'm clicked?"
 	});
 
+// selection.each(function(d.i){
+// 	this ==> DOM element
+// 	DOM -> selection
+// 	d3.select(this)
+// })
 
 
 
@@ -93,6 +101,17 @@ const xSaysY = function(x){
 }
 
 const simonSays = xSaysY('Simon');
-console.log(simonSays); 
-console.log(typeof simonSays);
-console.log(simonSays('hello world'));
+console.log(simonSays);//content of the function
+console.log(typeof simonSays);//"function"
+console.log(simonSays('hello world'));//
+
+alpha = [];
+
+function alphatobeta(x){
+	x = x + 1
+	return x
+}
+console.log(x);
+console.log(alpha);
+
+const v1=3

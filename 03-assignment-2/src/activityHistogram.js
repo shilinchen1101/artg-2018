@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 export default function activityHistogram(data){
 
 	//Need to append a the proper DOM scaffolding
-	const width = this.clientWidth; //What is "this"?
+	const width = this.clientWidth; //What is "this"? div
 	const height = this.clientHeight;
 	const margin = {t:15,r:25,b:25,l:25};
 	const w = width - margin.l - margin.r;
@@ -11,13 +11,15 @@ export default function activityHistogram(data){
 
 	const svg = d3.select(this)
 		.selectAll('svg')
-		.data([1]); //What's going on here?
+		.data([1]); //What's going on here?make sure there is only one <g>
+
+
 	const svgEnter = svg.enter().append('svg')
 		.attr('width',width)
 		.attr('height',height);
 	svgEnter.append('g').attr('class','plot')
 
-	const plot = svg.merge(svgEnter)
+	const plot = svg.merge(svgEnter)//plot is <g>
 		.select('.plot')
 		.attr('transform',`translate(${margin.l},${margin.t})`);
 
@@ -55,21 +57,26 @@ export default function activityHistogram(data){
 			return `${hour}:${min}`
 		});
 
+
+const rootElement = this;//,g.acitivity-histogram-inner.
 	//Draw
 	//Bars
 	//Update
 	const binsUpdate = plot
-		.selectAll('.bin')
+		.selectAll('.bin')//(this)
 		.data(tripsByQuarterHour);
+
+		//selection.datum()
+		//selection is size of 1
 
 	//Enter
 	const binsEnter = binsUpdate.enter()
 		.append('rect')
-		.attr('class','bin') //If you forget this, what will happen if we re-run this the activityHistogram function?
+		.attr('class','bin') //If you forget this, what will happen if we re-run this the activityHistogram function? it will keep add new bins
 		.attr('x', d => scaleX(d.x0))
 		.attr('width', d => (scaleX(d.x1) - scaleX(d.x0)))
-		.attr('y', d => h)
-		.attr('height', 0);
+		.attr('y', d => h)//
+		.attr('height', 0);//prepare to the animation transition
 
 	//Enter + update
 	binsEnter.merge(binsUpdate)

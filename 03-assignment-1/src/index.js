@@ -19,6 +19,7 @@ const plot = d3.select('#activity-histogram')
 	.attr('class','acitivity-histogram-inner')
 	.attr('transform',`translate(${margin.l},${margin.t})`);
 
+
 //Import and parse data
 d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 
@@ -36,6 +37,9 @@ function activityHistogram(data){
 	const histogram = d3.histogram()
 		.value(d => d.time_of_day0)
 		.thresholds(d3.range(0,24,.25));
+
+	console.log(histogram(data));
+
 	const tripsByQuarterHour = histogram(data)
 		.map(d => {
 			return {
@@ -49,7 +53,7 @@ function activityHistogram(data){
 	//Set up scales in the x and y direction
 	const scaleX = d3.scaleLinear().domain([0,24]).range([0,w]);
 	const maxVolume = d3.max(tripsByQuarterHour, d => d.volume);
-	const scaleY = d3.scaleLinear().domain([0,maxVolume]).range([h,0]);
+	const scaleY = d3.scaleLinear().domain([0,maxVolume]).range([h,0]);//cuz the svg attribution left top corner is (0,0)
 
 	//Set up axis generator
 	const axisY = d3.axisLeft()
@@ -59,30 +63,55 @@ function activityHistogram(data){
 	const axisX = d3.axisBottom()
 		.scale(scaleX)
 		.tickFormat(d => {
-			const time = +d;
+			const time = +d;//string to number d=data eg:18.75
 			const hour = Math.floor(time);
-			let min = Math.round((time-hour)*60);
+			let min = Math.round((time-hour)*60);//四舍五入
 			min = String(min).length === 1? "0"+ min : min;
 			return `${hour}:${min}`
+
 		});
 
 	//Draw
 	/*** YOUR CODE HERE ***/
 
+	const bar = plot.selectAll('.bar')
+		.data(tripsByQuarterHour);
 
+	const barEnter = bar.enter()
+		.append('rect')
+		.attr('class','bin')
+		.attr('x', d => scaleX(d.x0))
+		.attr('width', d => (scaleX(d.x1) - scaleX(d.x0)))
+		.attr('y', d => h)
+		.attr('height', 0);
 
+	barEnter.merge(bar)
+		.transition()
+		.duration(1000)
+		.attr('x', d => scaleX(d.x0))
+		.attr('width', d => (scaleX(d.x1) - scaleX(d.x0)))
+		.attr('y', d => scaleY(d.volume))
+		.attr('height', d => (h - scaleY(d.volume)))
+		.style('fill','steelblue')
+
+	bar.exit().remove();
 
 
 
 	/*** YOUR CODE HERE ***/
 
 	//Axis
+	//to make sure there is only one x and y axis
 	const axisXNode = d3.select(this)
-		.selectAll('.axis-x')
-		.data([1]);
+		.selectAll('.axis-x')//selection of size 0
+		.data([1]);// data array of 1 element => TO MAKE sure there is only one x axis
+		// enter set will be size 1
+		//exit 0
+		//update 0
 	const axisXNodeEnter = axisXNode.enter()
 		.append('g')
 		.attr('class','axis-x');
+		//<g.axis-x>
 	axisXNode.merge(axisXNodeEnter)
 		.attr('transform',`translate(0,${h})`)
 		.call(axisX);
